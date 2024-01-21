@@ -1,18 +1,19 @@
 import { Component } from 'react';
-import { Audio } from 'react-loader-spinner';
+import { BallTriangle } from 'react-loader-spinner';
 
 class Loader extends Component {
   render() {
     return (
       <>
-        <Audio
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="loading"
-          wrapperStyle
-          wrapperClass
+        <BallTriangle
+          height={100}
+          width={100}
+          radius={5}
+          color="#4fa94d"
+          ariaLabel="ball-triangle-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
         />
       </>
     );

@@ -8,6 +8,7 @@ class ImageGallery extends Component {
   state = {
     images: [],
     loading: false,
+    error: null,
   };
 
   componentDidMount() {
@@ -26,11 +27,17 @@ class ImageGallery extends Component {
           loading: false,
           images: data.hits?.length ? data.hits : [],
         });
+      })
+      .catch(error => {
+        this.setState({
+          loading: false,
+          error: error.message,
+        });
       });
   }
 
   render() {
-    const { images, loading } = this.state;
+    const { images, loading, error } = this.state;
     const elements = images.map(({ id, webformatURL, largeImageURL }) => (
       <li key={id} className={css.galleryItem}>
         <img src={webformatURL} alt="" />
@@ -38,8 +45,11 @@ class ImageGallery extends Component {
     ));
     return (
       <>
+        {error && <p>{error}</p>}
         {loading && <Loader />}
-        <ul className={css.gallery}>{elements}</ul>
+        {Boolean(elements.length) && (
+          <ul className={css.gallery}>{elements}</ul>
+        )}
       </>
     );
   }
