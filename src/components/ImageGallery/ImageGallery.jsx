@@ -1,54 +1,103 @@
 import { Component } from 'react';
-import axios from 'axios';
+import { searchImages } from '../API/images';
+
+import css from '../ImageGallery/image-gallery.module.css';
 import Loader from '../Loader/Loader';
 
-import css from './image-gallery.module.css';
+import ImageGalleryItem from 'components/ImageGallery/ImageGalleryItem/ImageGalleryItem';
+import Searchbar from './Searchbar/Searchbar';
+import Button from '../Button/Button';
+import Modal from '../Modal/Modal';
 
 class ImageGallery extends Component {
   state = {
+    search: '',
     images: [],
     loading: false,
     error: null,
+    page: 1,
+    modalOpen: false,
+    largeImage: {},
   };
 
-  componentDidMount() {
-    // const API_KEY = '41017518-95b21bb0f6248f508a9feed4e';
-    // const BASE_URL =
-    //   'https://pixabay.com/api/?q=cat&page=1&key=41017518-95b21bb0f6248f508a9feed4e&image_type=photo&orientation=horizontal&per_page=12';
-    this.setState({
-      loading: true,
-    });
-    axios
-      .get(
-        'https://pixabay.com/api/?q=cat&page=1&key=41017518-95b21bb0f6248f508a9feed4e&image_type=photo&orientation=horizontal&per_page=12'
-      )
-      .then(({ data }) => {
-        this.setState({
-          loading: false,
-          images: data.hits?.length ? data.hits : [],
-        });
-      })
-      .catch(error => {
-        this.setState({
-          loading: false,
-          error: error.message,
-        });
-      });
+  async componentDidUpdate(prevProps, prevState) {
+    const { search, page } = this.state;
+    if (search && (search !== prevState.search || page !== prevState.page)) {
+      this.fetchPosts();
+    }
   }
 
+  async fetchPosts() {
+    const { search, page } = this.state;
+    try {
+      this.setState({
+        loading: true,
+      });
+      const { data } = await searchImages(search, page);
+      this.setState(({ images }) => ({
+        images: data.hits?.length ? [...images, ...data.hits] : images,
+      }));
+    } catch (error) {
+      this.setState({
+        error: error.message,
+      });
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
+  }
+
+  handleSearch = ({ search }) => {
+    this.setState({
+      search,
+      images: [],
+      page: 1,
+    });
+  };
+
+  loadMore = () => {
+    this.setState(({ page }) => ({ page: page + 1 }));
+  };
+
+  showModal = largeImageURL => {
+    this.setState({
+      modalOpen: true,
+      largeImage: { largeImageURL },
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      modalOpen: false,
+      largeImage: {},
+    });
+  };
+
   render() {
-    const { images, loading, error } = this.state;
-    const elements = images.map(({ id, webformatURL, largeImageURL }) => (
-      <li key={id} className={css.galleryItem}>
-        <img src={webformatURL} alt="" />
-      </li>
-    ));
+    const { handleSearch, loadMore, showModal, closeModal } = this;
+    const { images, loading, error, modalOpen, largeImage } = this.state;
+    const imagesLength = Boolean(images.length);
+
     return (
       <>
+        <Searchbar onSubmit={handleSearch} />
         {error && <p>{error}</p>}
         {loading && <Loader />}
-        {Boolean(elements.length) && (
-          <ul className={css.gallery}>{elements}</ul>
+        {imagesLength && (
+          <ImageGalleryItem showModal={showModal} items={images} />
+        )}
+        {imagesLength && (
+          <div className={css.loadMoreWrapper}>
+            <Button onClick={loadMore} type="button">
+              Load More
+            </Button>
+          </div>
+        )}
+        {modalOpen && (
+          <Modal close={closeModal}>
+            <img src={largeImage.largeImageURL} alt="" />
+          </Modal>
         )}
       </>
     );
