@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
+import { IoClose } from 'react-icons/io5';
 import css from './modal.module.css';
 
 const modalRoot = document.getElementById('modal-root');
@@ -27,7 +28,9 @@ class Modal extends Component {
       <div onClick={closeModal} className={css.overlay}>
         <div className={css.modal}>
           <button onClick={close} className={css.closeBtn}>
-            х
+            <span className={css.buttonLabelClose}>
+              <IoClose />
+            </span>
           </button>{' '}
           {children}
         </div>

@@ -1,17 +1,16 @@
 import css from './image-gallery-item.module.css';
+import { nanoid } from 'nanoid';
 
-const ImageGalleryItem = ({ showModal, items }) => {
-  const elements = items.map(({ id, webformatURL, largeImageURL }) => (
+const ImageGalleryItem = ({ showModal, webformatURL, largeImageURL, tags }) => {
+  return (
     <li
-      key={id}
+      key={nanoid()}
       onClick={() => showModal(largeImageURL)}
       className={css.galleryItem}
     >
-      <img className={css.galleryItemImage} src={webformatURL} alt="" />
+      <img className={css.galleryItemImage} src={webformatURL} alt={tags} />
     </li>
-  ));
-
-  return <ul className={css.gallery}>{elements}</ul>;
+  );
 };
 
 export default ImageGalleryItem;

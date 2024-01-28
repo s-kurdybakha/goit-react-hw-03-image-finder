@@ -4,7 +4,7 @@
   text-align: center;
 }
 
-/* .gallery {
+.gallery {
   display: grid;
   max-width: calc(100vw - 48px);
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -20,7 +20,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
-} */
+}
 
 /* .galleryItem {
   padding: 10px;
