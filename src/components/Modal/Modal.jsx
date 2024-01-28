@@ -26,9 +26,9 @@ class Modal extends Component {
     return createPortal(
       <div onClick={closeModal} className={css.overlay}>
         <div className={css.modal}>
-          <span onClick={close} className={css.closeBtn}>
+          <button onClick={close} className={css.closeBtn}>
             х
-          </span>{' '}
+          </button>{' '}
           {children}
         </div>
       </div>,

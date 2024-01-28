@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { searchImages } from '../API/images';
+import { IMAGES_PER_PAGE } from '../API/images';
 
 import css from '../ImageGallery/image-gallery.module.css';
 import Loader from '../Loader/Loader';

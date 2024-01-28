@@ -1,8 +1,8 @@
 import axios from 'axios';
+export const IMAGES_PER_PAGE = 12;
 
 const instance = axios.create({
-  baseURL:
-    'https://pixabay.com/api/?q=cat&page=1&key=41017518-95b21bb0f6248f508a9feed4e&image_type=photo&orientation=horizontal&per_page=9',
+  baseURL: 'https://pixabay.com/api/',
   params: {
     key: '41017518-95b21bb0f6248f508a9feed4e',
     image_type: 'photo',
@@ -10,13 +10,7 @@ const instance = axios.create({
   },
 });
 
-export const getAllImages = () => {
-  return instance.get(
-    'https://pixabay.com/api/?q=cat&page=1&key=41017518-95b21bb0f6248f508a9feed4e&image_type=photo&orientation=horizontal&per_page=9'
-  );
-};
-
-export const searchImages = (q, page = 1, per_page = 12) => {
+export const searchImages = (q, page = 1, per_page = IMAGES_PER_PAGE) => {
   return instance.get('/', {
     params: {
       q,
