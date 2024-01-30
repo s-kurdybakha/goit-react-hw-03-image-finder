@@ -15,6 +15,7 @@ export class App extends PureComponent {
     search: '',
     images: [],
     loading: false,
+    isLoadMore: false,
     error: null,
     page: 1,
     modalOpen: false,
@@ -35,9 +36,18 @@ export class App extends PureComponent {
         loading: true,
       });
       const { data } = await searchImages(search, page);
+
       this.setState(({ images }) => ({
         images: data.hits?.length ? [...images, ...data.hits] : images,
       }));
+
+      if (data.totalHits > IMAGES_PER_PAGE) {
+        this.displayLoadMoreButton(true);
+      }
+
+      if (IMAGES_PER_PAGE * page >= data.totalHits) {
+        this.displayLoadMoreButton(false);
+      }
     } catch (error) {
       this.setState({
         error: error.message,
@@ -61,6 +71,10 @@ export class App extends PureComponent {
     this.setState(({ page }) => ({ page: page + 1 }));
   };
 
+  displayLoadMoreButton = isShow => {
+    this.setState({ isLoadMore: isShow });
+  };
+
   showModal = largeImageURL => {
     this.setState({
       modalOpen: true,
@@ -77,8 +91,9 @@ export class App extends PureComponent {
 
   render() {
     const { handleSearch, loadMore, showModal, closeModal } = this;
-    const { images, loading, error, modalOpen, largeImage, page } = this.state;
-    const imagesLength = Boolean(images.length);
+    const { images, loading, isLoadMore, error, modalOpen, largeImage } =
+      this.state;
+    // const imagesLength = Boolean(images.length);
     return (
       <div>
         <Searchbar onSubmit={handleSearch} />
@@ -86,7 +101,7 @@ export class App extends PureComponent {
         {loading && <Loader />}
 
         <ImageGallery showModal={showModal} items={images} />
-        {imagesLength && (
+        {isLoadMore && (
           <div className={css.loadMoreWrapper}>
             <Button onClick={loadMore} type="button">
               Load More
